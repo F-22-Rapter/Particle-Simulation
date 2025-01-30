@@ -13,7 +13,7 @@ let mouseForceMagnitude = 10; // Adjustable force magnitude for mouse
 let softeningFactor = 0.1; // Factor to prevent division by zero or instability
 let photonEmissionSpeed = 3; // Speed threshold for photon emission
 let photonEnergyLoss = 0.1; // Fraction of speed lost upon photon emission
-let strongnuclearConstant = 0
+let strongnuclearConstant = 1000
 let showPhotons = false; // Toggle visibility of photons
 let photons = []; // Store emitted photons
 // Global variables for world transformations

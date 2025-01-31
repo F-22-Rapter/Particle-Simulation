@@ -152,11 +152,11 @@ function drawHUD() {
   text("Press 1: Proton, 2: Neutron, 3: Electron, Hold key for continuous spawning", width / 2, 20);
   text("Press C: Clear Particles", width / 2, 40);
   text(`Photons: ${showPhotons ? "Visible" : "Hidden"} (Toggle with P)`, width / 2, 60);
-  text("Drag to move, Scroll to zoom", width / 2, 80);
+  text("Drag to move, Scroll to zoom", width / 2, 100);
   if(freazed){
-    text("Spawning particles: Moving", width / 2, 100);
+    text("Spawning particles: Moving (Toggle with Shift)", width / 2, 80);
   }else{
-    text("Spawning particles: Freezed", width / 2, 100); 
+    text("Spawning particles: Freezed (Toggle with Shift)", width / 2, 80); 
   }
   text("Q: Time stop W: Time start E: Time 5fps", width / 2, 120);
   if(frameRate() <= 6 || worldtime){

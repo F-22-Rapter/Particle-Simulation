@@ -5,18 +5,18 @@ let neutronCharge = 0; // Charge for neutrons
 let electronCharge = -1; // Charge for electrons
 let protonMass = 1883; // Simplified mass
 let neutronMass = 1883; // Simplified mass
-let electronMass = 100; // Simplified mass
+let electronMass = 10; // Simplified mass
 let protonRadius = 30;
 let nuetronRadius = 25;
 let electronRadius = 10;
-let k = 9e5; // Simplified electrostatic constant
+let k = 100; // Simplified electrostatic constant
 let G = 1e-6; // Simplified gravitational constant
 let positiveForce = true; // Toggle for positive or negative force
 let mouseForceMagnitude = 10; // Adjustable force magnitude for mouse
 let softeningFactor = 0.1; // Factor to prevent division by zero or instability
-let photonEmissionSpeed = 3; // Speed threshold for photon emission
-let photonEnergyLoss = 0.5; // Fraction of speed lost upon photon emission
-let strongnuclearConstant = 9e7
+let photonEmissionSpeed = 7; // Speed threshold for photon emission
+let photonEnergyLoss = 0.1; // Fraction of speed lost upon photon emission
+let strongnuclearConstant = 4000
 let nuclearMAX = 52;
 let nuclearMIN = 17;
 let showPhotons = false; // Toggle visibility of photons
@@ -259,11 +259,11 @@ class Particle {
     // }
 
 
-    function resolveCollision(thisObj, otherObj) {
+    function resolveCollision(thisObj, otherObj,ditance) {
       let dx = otherObj.x - thisObj.x;
       let dy = otherObj.y - thisObj.y;
       let distance = dist(thisObj.x, thisObj.y, otherObj.x, otherObj.y);
-      let minDistance = 10; 
+      let minDistance = ditance;
   
       if (distance < minDistance ) {
           let overlap = minDistance - distance;
@@ -319,15 +319,15 @@ class Particle {
               nuclearForceMag = strongnuclearConstant;
 
             }        
-            if (r < nuclearMIN) {
-              nuclearForceMag = -strongnuclearConstant;
+            // if (r < nuclearMIN) {
+            //   nuclearForceMag = -strongnuclearConstant;
 
-            }          
+            // }          
             let nuclearForce = direction.copy().mult(nuclearForceMag);
             this.applyForce(nuclearForce);
 
           }
-          // resolveCollision(this,other);
+          resolveCollision(this,other,nuclearMIN);
 
           // if (
           //   (this instanceof Proton && other instanceof Proton) 

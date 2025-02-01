@@ -327,18 +327,18 @@ class Particle {
             this.applyForce(nuclearForce);
 
           }
-          resolveCollision(this,other,nuclearMIN);
+          // resolveCollision(this,other,nuclearMIN);
 
-          // if (
-          //   (this instanceof Proton && other instanceof Proton) 
-          // ) {
-          //   resolveCollision(this,other);
-          // }
-          // if (
-          //   (this instanceof Neutron && other instanceof Neutron)
-          // ) {
-          //   resolveCollision(this,other);
-          // }
+          if (
+            (this instanceof Proton && other instanceof Proton) 
+          ) {
+            resolveCollision(this,other,nuclearMIN);
+          }
+          if (
+            (this instanceof Neutron && other instanceof Neutron)
+          ) {
+            resolveCollision(this,other,nuclearMIN);
+          }
         }
       }
     } 

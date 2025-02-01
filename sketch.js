@@ -5,48 +5,66 @@ let neutronCharge = 0; // Charge for neutrons
 let electronCharge = -1; // Charge for electrons
 let protonMass = 1883; // Simplified mass
 let neutronMass = 1883; // Simplified mass
-let electronMass = 400; // Simplified mass
-let k = 5000; // Simplified electrostatic constant
+let electronMass = 100; // Simplified mass
+let protonRadius = 30;
+let nuetronRadius = 25;
+let electronRadius = 10;
+let k = 9e5; // Simplified electrostatic constant
 let G = 1e-6; // Simplified gravitational constant
 let positiveForce = true; // Toggle for positive or negative force
 let mouseForceMagnitude = 10; // Adjustable force magnitude for mouse
 let softeningFactor = 0.1; // Factor to prevent division by zero or instability
 let photonEmissionSpeed = 3; // Speed threshold for photon emission
-let photonEnergyLoss = 0.1; // Fraction of speed lost upon photon emission
-let strongnuclearConstant = 3000
+let photonEnergyLoss = 0.5; // Fraction of speed lost upon photon emission
+let strongnuclearConstant = 9e7
+let nuclearMAX = 52;
+let nuclearMIN = 17;
 let showPhotons = false; // Toggle visibility of photons
 let photons = []; // Store emitted photons
 // Global variables for world transformations
 let scaleFactor = 1;
 let offsetX = 0;
 let offsetY = 0;
-let worldSize = 5000; // Define the size of the world
+let worldSize = 10000; // Define the size of the world
 let keySpawnTimers = {}; // Track time keys are held
 let mousegravity = 1000;
 let mouseelectrostaic = 1000000;
 let freazed = true;
 let worldtime = true;
+let boundx = -worldSize*0.5 + 0.5*window.innerWidth;
+let boundy = -worldSize*0.5 + + 0.5*window.innerHeight
+let circlex = 0.5*window.innerWidth
+let circley =  0.5*window.innerHeight
+
 
 function setup() {
+
   createCanvas(window.innerWidth, window.innerHeight);
   textAlign(CENTER, CENTER);
 }
+function ChangeLook(){
+
+}
 
 function draw() {
-  background(30);
+  background(0);
+
 
   // Apply transformations
   translate(offsetX, offsetY);
   scale(scaleFactor);
 
   // Draw world boundaries
-  stroke(100);
+  stroke(255);
   noFill();
-  rect((-worldSize / 2) + 0.5*window.innerWidth, -worldSize / 2 + + 0.5*window.innerHeight, worldSize, worldSize);
+  rect(boundx, boundy, worldSize, worldSize);
+
+  // circle bound
+  // circle(0.5*window.innerWidth,0.5*window.innerHeight,worldSize); 
 
   // Spawn particles based on key hold duration
   handleKeySpawn();
-
+  stroke(100);
   // Display particles
   for (let particle of particles) {
     if(worldtime){    
@@ -106,7 +124,10 @@ function keyPressed() {
   if (key === "e") {worldtime = true
     frameRate(5)};
   if (key === "C" || key === "c") particles = []; // Clear all particles
-  if (key === "P" || key === "p") showPhotons = !showPhotons; // Toggle photon visibility
+  if (key === "P" || key === "p") {
+    showPhotons = !showPhotons
+    photons = [];
+} // Toggle photon visibility
   if (keyCode === SHIFT) freazed = !freazed;
 }
 
@@ -114,6 +135,7 @@ function keyReleased() {
   // Remove spawn timer for key
   delete keySpawnTimers[key];
 }
+
 
 
 function handleKeySpawn() {
@@ -131,7 +153,7 @@ function handleKeySpawn() {
 function spawnParticleByKey(key) {
   const x = mouseX / scaleFactor - offsetX / scaleFactor;
   const y = mouseY / scaleFactor - offsetY / scaleFactor;
-  if (x >= -worldSize / 2 && x <= worldSize / 2 && y >= -worldSize / 2 && y <= worldSize / 2) {
+  if (x >= -worldSize*0.5+0.5*window.innerWidth && x <= worldSize*0.5+0.5*window.innerWidth && y >= -worldSize*0.5+0.5*window.innerHeight && y <= worldSize*0.5+0.5*window.innerHeight) {
 
     if (key === "1") particles.push(new Proton(x, y,freazed));
     if (key === "2") particles.push(new Neutron(x, y,freazed));
@@ -140,6 +162,12 @@ function spawnParticleByKey(key) {
 
   }
 
+}
+function movePoint180(cx, cy, x, y) {
+  // Rotate the point 180 degrees around the center (cx, cy)
+  let newX = 2 * cx - x;
+  let newY = 2 * cy - y;
+  return { x: newX, y: newY };
 }
 
 function drawHUD() {
@@ -170,7 +198,7 @@ function drawHUD() {
 
 
 class Particle {
-  constructor(x, y, charge, mass, color,freeze) {
+  constructor(x, y, charge, mass, color,freeze,particlesize) {
     this.x = x;
     this.y = y;
     this.vx = 0;
@@ -181,6 +209,7 @@ class Particle {
     this.mass = mass;
     this.color = color;
     this.freeze = freeze;
+    this.particlesize = particlesize;
   }
 
   applyForce(force) {
@@ -217,10 +246,18 @@ class Particle {
     this.emitPhoton();
 
     // Screen wrapping
-    if (this.x < -0.5*worldSize) this.x = 0.5*worldSize;
-    if (this.x > 0.5*worldSize) this.x = -0.5*worldSize;
-    if (this.y < -0.5*worldSize) this.y = 0.5*worldSize;
-    if (this.y > 0.5*worldSize) this.y = -0.5*worldSize;
+    if (this.x < -0.5*worldSize+circlex) this.x = 0.5*worldSize+circlex;
+    if (this.x > 0.5*worldSize+circlex) this.x = -0.5*worldSize+circlex;
+    if (this.y < -0.5*worldSize+circley) this.y = 0.5*worldSize+circley;
+    if (this.y > 0.5*worldSize+circley) this.y = -0.5*worldSize+circley;
+
+    //screen wraping for circle
+    // if(dist(this.x,this.y,circlex,circley)>0.5*worldSize){
+    //   let opposite = movePoint180(circlex,circley,this.x,this.y)
+    //   this.x = opposite.x
+    //   this.y = opposite.y
+    // }
+
 
     function resolveCollision(thisObj, otherObj) {
       let dx = otherObj.x - thisObj.x;
@@ -278,15 +315,19 @@ class Particle {
             (this instanceof Neutron && other instanceof Proton)
           ) {
             let nuclearForceMag 
-            if (r < 20 && r >11) {
+            if (r < nuclearMAX && r >nuclearMIN) {
               nuclearForceMag = strongnuclearConstant;
 
-            }         
+            }        
+            if (r < nuclearMIN) {
+              nuclearForceMag = -strongnuclearConstant;
+
+            }          
             let nuclearForce = direction.copy().mult(nuclearForceMag);
             this.applyForce(nuclearForce);
 
           }
-          resolveCollision(this,other);
+          // resolveCollision(this,other);
 
           // if (
           //   (this instanceof Proton && other instanceof Proton) 
@@ -310,7 +351,7 @@ class Particle {
 
     noStroke();
     fill(this.color);
-    ellipse(this.x, this.y, 10);
+    ellipse(this.x, this.y, this.particlesize);
     if(!this.freeze){
       noStroke();
       fill(0);
@@ -334,7 +375,7 @@ class Photon {
   }
 
   isOnScreen() {
-    return this.x >= -0.5*worldSize && this.x <= 0.5*worldSize && this.y >= -0.5*worldSize && this.y <= 0.5*worldSize;
+    return this.x >= -0.5*worldSize+0.5*window.innerWidth && this.x <= 0.5*worldSize+0.5*window.innerWidth && this.y >= -0.5*worldSize+0.5*window.innerHeight&& this.y <= 0.5*worldSize+0.5*window.innerHeight;
   }
 
   show() {
@@ -346,19 +387,19 @@ class Photon {
 
 class Proton extends Particle {
   constructor(x, y,freeze) {
-    super(x, y, protonCharge, protonMass, color(255, 0, 0),freeze);
+    super(x, y, protonCharge, protonMass, color(255, 0, 0),freeze,protonRadius);
   }
 }
 
 class Neutron extends Particle {
   constructor(x, y,freeze) {
-    super(x, y, neutronCharge, neutronMass, color(255, 255, 0),freeze);
+    super(x, y, neutronCharge, neutronMass, color(255, 255, 0),freeze,nuetronRadius);
   }
 }
 
 class Electron extends Particle {
   constructor(x, y,freeze) {
-    super(x, y, electronCharge, electronMass, color(0, 0, 255),freeze);
+    super(x, y, electronCharge, electronMass, color(0, 0, 255),freeze,electronRadius);
   }
 }
 

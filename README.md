@@ -12,3 +12,4 @@ p: show/hide photos, originaly turned off to reduce lag
 shift: spawns a particles which is frozen in space, can be spoted with the black circles
 scroll: zoom in, zoom out
 click and drag: moves cavas
+h: hides text

@@ -9,7 +9,7 @@ let electronMass = 10; // Simplified mass
 let protonRadius = 30;
 let nuetronRadius = 25;
 let electronRadius = 10;
-let k = 1000; // Simplified electrostatic constant
+let k = 2000; // Simplified electrostatic constant
 let G = 1e-6; // Simplified gravitational constant
 let positiveForce = true; // Toggle for positive or negative force
 let mouseForceMagnitude = 10; // Adjustable force magnitude for mouse
@@ -21,11 +21,11 @@ let nuclearMAX = 52;
 let nuclearMIN = 17;
 let showPhotons = false; // Toggle visibility of photons
 let photons = []; // Store emitted photons
-// Global variables for world transformations
+let GUHhididen = true;
 let scaleFactor = 1;
 let offsetX = 0;
 let offsetY = 0;
-let worldSize = 10000; // Define the size of the world
+let worldSize = 5000; // Define the size of the world
 let keySpawnTimers = {}; // Track time keys are held
 let mousegravity = 1000;
 let mouseelectrostaic = 1000000;
@@ -129,6 +129,7 @@ function keyPressed() {
     photons = [];
 } // Toggle photon visibility
   if (keyCode === SHIFT) freazed = !freazed;
+  if (key === "h") GUHhididen = !GUHhididen;
 }
 
 function keyReleased() {
@@ -143,7 +144,7 @@ function handleKeySpawn() {
   for (let key in keySpawnTimers) {
     let elapsed = millis() - keySpawnTimers[key];
     if (elapsed > 500) { // Start spawning continuously after 500ms
-      if(frameCount % 5 == 0){
+      if(frameCount % 3 == 0){
         spawnParticleByKey(key);
       }
     }
@@ -173,10 +174,12 @@ function movePoint180(cx, cy, x, y) {
 function drawHUD() {
   // Reset transformations to draw HUD in screen space
   resetMatrix();
-  
   fill(255);
+  if(!freazed){
+    fill(color(0,0,255))
+  }
   textSize(14);
-  
+  if(GUHhididen){
   text("Press 1: Proton, 2: Neutron, 3: Electron, Hold key for continuous spawning", width / 2, 20);
   text("Press C: Clear Particles", width / 2, 40);
   text(`Photons: ${showPhotons ? "Visible" : "Hidden"} (Toggle with P)`, width / 2, 60);
@@ -188,9 +191,14 @@ function drawHUD() {
   }
   text("Q: Time stop W: Time start E: Time 5fps", width / 2, 120);
   if(frameRate() <= 6 || worldtime){
-    text("Time Start FPS: " + round(frameRate(),0) , width / 2, 140);
+    text("Time Start FPS: " + round(frameRate(),0) + " Particles: " + particles.length , width / 2, 140);
   }else{
     text("Time Frozen FPS: 0", width / 2, 140); 
+  }
+  text("Hide Text with H", width / 2, 160);
+  }else{
+    text("Show Text with H", width / 2, 20);
+    text("Time Start FPS: " + round(frameRate(),0) + " Particles: " + particles.length , width / 2, 40);
   }
 }
 
@@ -327,20 +335,21 @@ class Particle {
             this.applyForce(nuclearForce);
 
           }
-          // resolveCollision(this,other,nuclearMIN);
+          resolveCollision(this,other,nuclearMIN);
 
-          if (
-            (this instanceof Proton && other instanceof Proton) 
-          ) {
-            resolveCollision(this,other,nuclearMIN);
-          }
-          if (
-            (this instanceof Neutron && other instanceof Neutron)
-          ) {
-            resolveCollision(this,other,nuclearMIN);
-          }
+          // if (
+          //   (this instanceof Proton && other instanceof Proton) 
+          // ) {
+          //   resolveCollision(this,other,nuclearMIN);
+          // }
+          // if (
+          //   (this instanceof Neutron && other instanceof Neutron)
+          // ) {
+          //   resolveCollision(this,other,nuclearMIN);
+          // }
         }
       }
+      
     } 
     }
   }
@@ -355,7 +364,7 @@ class Particle {
     if(!this.freeze){
       noStroke();
       fill(0);
-      ellipse(this.x, this.y, 4);
+      ellipse(this.x, this.y, this.particlesize/3);
     }
   }
 }
